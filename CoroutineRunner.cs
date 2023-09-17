@@ -25,13 +25,36 @@ namespace U2GCoroutines
 
             s_instance = this;
         }
-        
+
+        /// <summary>
+        /// Runs the provided coroutine.
+        /// </summary>
+        /// <param name="owningNode"></param>
+        /// <param name="coroutine"></param>
         public static void RunCoroutine(Node owningNode, IEnumerator coroutine)
         {
             s_owner.Add(owningNode);
             s_enumerators.Add(new Stack<IEnumerator>(new[] { coroutine }));
         }
 
+        /// <summary>
+        /// Stops all coroutines running on the provided node.
+        /// </summary>
+        /// <param name="owningNode"></param>
+        public static void StopAllCoroutines(Node owningNode)
+        {
+            for (var i = 0; i < s_owner.Count; i++)
+            {
+                if (s_owner[i] == owningNode)
+                {
+                    s_enumerators.RemoveAt(i);
+                    s_owner.RemoveAt(i);
+                    i--;
+                }
+            }
+        }
+        
+        
         public override void _Process(float delta)
         {
             List<int> indiciesToRemove = new List<int>();

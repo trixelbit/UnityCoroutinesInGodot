@@ -70,6 +70,7 @@ namespace U2GCoroutines
     }
 
     //WaitForEndOfFrame
+    
     //WaitForFixedUpdate
 
     /// <summary>
@@ -90,7 +91,32 @@ namespace U2GCoroutines
         public object Current { get; }
     }
 
-    //WaitUntil
+    /// <summary>
+    /// Waits until the provided function returns true.
+    /// </summary>
+    public class WaitUntil : IEnumerator
+    {
+        private readonly Func<bool> _function;
+        
+        public object Current { get; }
+        
+        public WaitUntil(Func<bool> function)
+        {
+            _function = function;
+        }
+        
+        public bool MoveNext()
+        {
+            return !_function();
+        }
 
+        public void Reset()
+        {
+            throw new NotImplementedException();
+        }
+
+    }
+    
+    
     //WaitWhile
 }
