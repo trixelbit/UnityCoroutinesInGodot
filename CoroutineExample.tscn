@@ -1,7 +1,6 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://UnityCoroutinesInGodot/Example/CoroutineTestNode.cs" type="Script" id=1]
-[ext_resource path="res://Core/Utilities/Object Behavior/PointTraveler.cs" type="Script" id=2]
 [ext_resource path="res://TimeWarper.cs" type="Script" id=3]
 [ext_resource path="res://Application.cs" type="Script" id=4]
 
@@ -20,15 +19,6 @@ shader = SubResource( 1 )
 shader_param/_MainColor = Plane( 0.1, 0.1, 0.1, 0 )
 
 [node name="Spatial" type="Spatial"]
-
-[node name="Traveler" type="Spatial" parent="."]
-script = ExtResource( 2 )
-TravelPoints = [ Vector3( -4.941, 0.268, 0 ), Vector3( 5, 0, 0 ) ]
-StepDistance = 3.697
-
-[node name="CSGSphere" type="CSGSphere" parent="Traveler"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0 )
-visible = false
 
 [node name="Camera" type="Camera" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.878, 100 )
@@ -141,10 +131,19 @@ transform = Transform( 138.773, 0, 0, 0, 64.7093, 0, 0, 0, 1.00343, 0, -8.22527,
 material = SubResource( 2 )
 
 [node name="StopAllCoroutines" type="Button" parent="."]
-margin_left = 32.0
-margin_top = 144.0
-margin_right = 89.0
-margin_bottom = 201.0
+margin_left = 456.0
+margin_top = 34.0
+margin_right = 716.0
+margin_bottom = 91.0
+
+[node name="StopAll Coroutines" type="Label" parent="StopAllCoroutines"]
+margin_left = 22.0
+margin_top = 8.0
+margin_right = 224.0
+margin_bottom = 43.0
+text = "Stop All Coroutines"
+align = 1
+valign = 1
 
 [connection signal="pressed" from="Wait Little/StopNode" to="Wait Little" method="OnStopCoroutines"]
 [connection signal="pressed" from="Wait Big/StopNode" to="Wait Big" method="OnStopCoroutines"]
