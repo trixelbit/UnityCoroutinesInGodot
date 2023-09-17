@@ -117,6 +117,30 @@ namespace U2GCoroutines
 
     }
     
+    /// <summary>
+    /// Waits while the provided function returns true.
+    /// </summary>
+    public class WaitWhile : IEnumerator
+    {
+        private readonly Func<bool> _function;
+        
+        public object Current { get; }
+        
+        public WaitWhile(Func<bool> function)
+        {
+            _function = function;
+        }
+        
+        public bool MoveNext()
+        {
+            return _function();
+        }
+
+        public void Reset()
+        {
+            throw new NotImplementedException();
+        }
+
+    }
     
-    //WaitWhile
 }
