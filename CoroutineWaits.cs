@@ -27,10 +27,7 @@ namespace U2GCoroutines
             return DateTime.Now.TimeOfDay < _endTime;
         }
 
-        public void Reset()
-        {
-            
-        }
+        public void Reset() { }
     }
         
     /// <summary>
@@ -63,30 +60,26 @@ namespace U2GCoroutines
             return DateTime.Now.TimeOfDay < endTime;
         }
 
-        public void Reset()
-        {
-            
-        }
+        public void Reset() { }
     }
 
-    //WaitForEndOfFrame
-    
-    //WaitForFixedUpdate
-
     /// <summary>
-    ///  
+    /// Waits for the next time PhysicsProcess is called.
     /// </summary>
-    public class WaitForFixedUpdate : IEnumerator
+    /// <remarks>
+    /// This is equivalent to Unity's WaitForFixedUpdate.
+    /// </remarks>
+    public class WaitForFixedUpdate : ITickType, IEnumerator
     {
+        public CoroutineRunner.ERunnerTick TickType => CoroutineRunner.ERunnerTick.Physics;
+
+        
         public bool MoveNext()
         {
-            throw new NotImplementedException();
+            return false;
         }
 
-        public void Reset()
-        {
-            throw new NotImplementedException();
-        }
+        public void Reset() { }
 
         public object Current { get; }
     }
@@ -114,7 +107,6 @@ namespace U2GCoroutines
         {
             throw new NotImplementedException();
         }
-
     }
     
     /// <summary>
@@ -136,11 +128,17 @@ namespace U2GCoroutines
             return _function();
         }
 
-        public void Reset()
-        {
-            throw new NotImplementedException();
-        }
-
+        public void Reset() {}
     }
-    
+
+    /// <summary>
+    /// Tick type for waited.
+    /// Indicates if a wait's should be updated or skipped.
+    /// Any waits that don't implement this could have their MoveNext()
+    /// called by both _Process and _PhysicsProcess in single frame().
+    /// </summary>
+    public interface ITickType
+    {
+        CoroutineRunner.ERunnerTick TickType { get; }
+    }
 }

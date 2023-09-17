@@ -12,9 +12,12 @@ namespace U2GCoroutines
     {
         private static CoroutineRunner s_instance;
         
-        private static List<Node> s_owner = new List<Node>();
+        private static readonly List<Node> s_owner = new List<Node>();
         
-        private static List<Stack<IEnumerator>> s_enumerators = new List<Stack<IEnumerator>>();
+        private static readonly List<IEnumerator> s_originalEnumerator = new List<IEnumerator>();
+        
+        private static readonly List<Stack<IEnumerator>> s_enumeratorsStacks = new List<Stack<IEnumerator>>();
+        
         
         public CoroutineRunner()
         {
@@ -26,66 +29,108 @@ namespace U2GCoroutines
             s_instance = this;
         }
 
+        public enum ERunnerTick
+        {
+            Process, 
+            Physics
+        }
+        
         /// <summary>
         /// Runs the provided coroutine.
         /// </summary>
-        /// <param name="owningNode"></param>
-        /// <param name="coroutine"></param>
-        public static void RunCoroutine(Node owningNode, IEnumerator coroutine)
+        /// <param name="owningNode">Node that started coroutine.</param>
+        /// <param name="coroutine">Coroutine to be ran.</param>
+        public static void Run(Node owningNode, IEnumerator coroutine)
         {
             s_owner.Add(owningNode);
-            s_enumerators.Add(new Stack<IEnumerator>(new[] { coroutine }));
+            s_originalEnumerator.Add(coroutine);
+            s_enumeratorsStacks.Add(new Stack<IEnumerator>(new[] { coroutine }));
         }
 
+
         /// <summary>
-        /// Stops all coroutines running on the provided node.
+        /// Stops all coroutines started by the owning node.
         /// </summary>
-        /// <param name="owningNode"></param>
-        public static void StopAllCoroutines(Node owningNode)
+        /// <param name="owningNode">The owning that started the coroutines (if any)</param>
+        public static void StopAllCoroutinesForNode(Node owningNode)
         {
-            for (var i = 0; i < s_owner.Count; i++)
+            for (int i = s_owner.Count - 1; i >= 0; i--)
             {
                 if (s_owner[i] == owningNode)
                 {
-                    s_enumerators.RemoveAt(i);
+                    s_enumeratorsStacks.RemoveAt(i);
+                    s_originalEnumerator.RemoveAt(i);
                     s_owner.RemoveAt(i);
-                    i--;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Stops a specific coroutine started by the owning node.
+        /// </summary>
+        /// <param name="owningNode">The owning node that started the coroutine.</param>
+        /// <param name="enumerator">The enumerator to stop.</param>
+        public static void StopCoroutine(Node owningNode,IEnumerator enumerator)
+        {
+            for (int i = s_owner.Count - 1; i >= 0; i--)
+            {
+                if (s_owner[i] == owningNode && 
+                    s_originalEnumerator[i] == enumerator)
+                {
+                    s_enumeratorsStacks.RemoveAt(i);
+                    s_originalEnumerator.RemoveAt(i);
+                    s_owner.RemoveAt(i);
                 }
             }
         }
         
-        
         public override void _Process(float delta)
+        {
+            ProcessCoroutines(ERunnerTick.Process);
+        }
+
+        public override void _PhysicsProcess(float delta)
+        {
+            ProcessCoroutines(ERunnerTick.Physics);
+        }
+        
+        private void ProcessCoroutines(ERunnerTick tickType)
         {
             List<int> indiciesToRemove = new List<int>();
 
-            for (var i = 0; i < s_enumerators.Count; i++)
+            for (var i = 0; i < s_enumeratorsStacks.Count; i++)
             {
-                
-                if (s_enumerators[i].Count == 0)
+                if (s_enumeratorsStacks[i].Count == 0)
                 {
                     indiciesToRemove.Add(i);
+                    continue;
                 }
-
                
-                IEnumerator instruction = s_enumerators[i].Peek();
+                IEnumerator instruction = s_enumeratorsStacks[i].Peek();
+
+                if (instruction is ITickType tick && tick.TickType != tickType)
+                {
+                    continue;
+                }
                 
                 if (!instruction.MoveNext())
                 {
-                    s_enumerators[i].Pop();
+                    s_enumeratorsStacks[i].Pop();
                 }
 
                 if (instruction.Current is IEnumerator next && instruction != next)
                 {
-                    s_enumerators[i].Push(next);
+                    s_enumeratorsStacks[i].Push(next);
                 }
             }
             
             for (var i = indiciesToRemove.Count -1; i >= 0; i--)
             {
-                s_enumerators.RemoveAt(indiciesToRemove[i]);
+                s_enumeratorsStacks.RemoveAt(indiciesToRemove[i]);
+                s_originalEnumerator.RemoveAt(indiciesToRemove[i]);
                 s_owner.RemoveAt(indiciesToRemove[i]);
             }
         }
+        
     }
 }
