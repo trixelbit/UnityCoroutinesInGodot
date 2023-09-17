@@ -7,9 +7,6 @@ I'm used to Unity's coroutines, so I decided to make something that recreates
 how coroutines work in Godot. 
 
 
-https://github.com/trixelbit/UnityCoroutinesInGodot/assets/38009610/40353607-fc0a-4955-8300-243eb7e848c8
-
-
 This is specifically for Godot 3. 
 
 This is started as of 9/16/2023.
