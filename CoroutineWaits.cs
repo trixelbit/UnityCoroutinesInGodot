@@ -2,7 +2,7 @@ using Godot;
 using System;
 using System.Collections;
 
-namespace Coroutines
+namespace U2GCoroutines
 {
     /// <summary>
     /// Waits for the provided number of seconds to pass regardless of time scale.

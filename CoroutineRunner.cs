@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Godot;
 
-namespace Coroutines 
+namespace U2GCoroutines 
 {
     /// <summary>
     /// Responsible for running of coroutines.
