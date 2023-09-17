@@ -30,7 +30,6 @@ public class CoroutineTestNode : Spatial
         Translation = new Vector3(-10, Translation.y, 0);
         CoroutineRunner.Run(this,DelayedStop());
         CoroutineRunner.Run(this, MoveUpdate());
-        
     }
 
     public void OnStopCoroutines()
