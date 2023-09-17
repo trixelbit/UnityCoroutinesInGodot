@@ -1,0 +1,161 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://UnityCoroutinesInGodot/Example/CoroutineTestNode.cs" type="Script" id=1]
+[ext_resource path="res://Core/Utilities/Object Behavior/PointTraveler.cs" type="Script" id=2]
+[ext_resource path="res://TimeWarper.cs" type="Script" id=3]
+[ext_resource path="res://Application.cs" type="Script" id=4]
+
+[sub_resource type="Shader" id=1]
+code = "shader_type spatial;
+
+uniform vec4 _MainColor;
+
+void fragment()
+{
+	ALBEDO = _MainColor.rgb;
+}"
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = SubResource( 1 )
+shader_param/_MainColor = Plane( 0.1, 0.1, 0.1, 0 )
+
+[node name="Spatial" type="Spatial"]
+
+[node name="Traveler" type="Spatial" parent="."]
+script = ExtResource( 2 )
+TravelPoints = [ Vector3( -4.941, 0.268, 0 ), Vector3( 5, 0, 0 ) ]
+StepDistance = 3.697
+
+[node name="CSGSphere" type="CSGSphere" parent="Traveler"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0 )
+visible = false
+
+[node name="Camera" type="Camera" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.878, 100 )
+fov = 30.7
+script = ExtResource( 3 )
+
+[node name="HSlider" type="HSlider" parent="Camera"]
+margin_left = 71.0
+margin_top = 54.0
+margin_right = 296.0
+margin_bottom = 70.0
+max_value = 4.0
+step = 0.01
+value = 1.0
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Camera"]
+margin_left = 159.0
+margin_top = 109.0
+margin_right = 292.0
+margin_bottom = 149.0
+text = "TimeScale: 1"
+
+[node name="Node" type="Node" parent="."]
+script = ExtResource( 4 )
+
+[node name="Wait Little" type="CSGBox" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 17.583, 0 )
+script = ExtResource( 1 )
+IterationTimeWait = 0.1
+
+[node name="StopNode" type="Button" parent="Wait Little"]
+margin_left = 124.0
+margin_top = 181.0
+margin_right = 157.0
+margin_bottom = 215.0
+
+[node name="Wait Big" type="CSGBox" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10.1009, 0.709724 )
+script = ExtResource( 1 )
+IterationTimeWait = 1.0
+
+[node name="StopNode" type="Button" parent="Wait Big"]
+margin_left = 124.0
+margin_top = 257.0
+margin_right = 157.0
+margin_bottom = 291.0
+
+[node name="RealWait Little" type="CSGBox" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.51935, 1.41945 )
+script = ExtResource( 1 )
+IterationTimeWait = 0.1
+WaitType = 1
+
+[node name="StopNode" type="Button" parent="RealWait Little"]
+margin_left = 127.0
+margin_top = 316.0
+margin_right = 160.0
+margin_bottom = 344.0
+
+[node name="RealWait Big" type="CSGBox" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.4469, 1.41945 )
+script = ExtResource( 1 )
+IterationTimeWait = 1.0
+WaitType = 1
+
+[node name="StopNode" type="Button" parent="RealWait Big"]
+margin_left = 129.0
+margin_top = 375.0
+margin_right = 162.0
+margin_bottom = 403.0
+
+[node name="WaitUntil" type="CSGBox" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -8.22527, 1.41945 )
+script = ExtResource( 1 )
+IterationTimeWait = 1.0
+WaitType = 2
+
+[node name="Button" type="Button" parent="WaitUntil"]
+margin_left = 42.0
+margin_top = 420.0
+margin_right = 99.0
+margin_bottom = 477.0
+
+[node name="StopNode" type="Button" parent="WaitUntil"]
+margin_left = 129.0
+margin_top = 444.0
+margin_right = 162.0
+margin_bottom = 474.0
+
+[node name="WaitWhile" type="CSGBox" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -13.9452, 1.41945 )
+script = ExtResource( 1 )
+IterationTimeWait = 1.0
+WaitType = 3
+
+[node name="Button" type="Button" parent="WaitWhile"]
+margin_left = 45.0
+margin_top = 520.0
+margin_right = 102.0
+margin_bottom = 577.0
+
+[node name="StopNode" type="Button" parent="WaitWhile"]
+margin_left = 134.0
+margin_top = 543.0
+margin_right = 167.0
+margin_bottom = 568.0
+
+[node name="CSGBox" type="CSGBox" parent="."]
+transform = Transform( 138.773, 0, 0, 0, 64.7093, 0, 0, 0, 1.00343, 0, -8.22527, -11.3877 )
+material = SubResource( 2 )
+
+[node name="StopAllCoroutines" type="Button" parent="."]
+margin_left = 32.0
+margin_top = 144.0
+margin_right = 89.0
+margin_bottom = 201.0
+
+[connection signal="pressed" from="Wait Little/StopNode" to="Wait Little" method="OnStopCoroutines"]
+[connection signal="pressed" from="Wait Big/StopNode" to="Wait Big" method="OnStopCoroutines"]
+[connection signal="pressed" from="RealWait Little/StopNode" to="RealWait Little" method="OnStopCoroutines"]
+[connection signal="pressed" from="RealWait Big/StopNode" to="RealWait Big" method="OnStopCoroutines"]
+[connection signal="button_down" from="WaitUntil/Button" to="WaitUntil" method="OnButtonPressed"]
+[connection signal="pressed" from="WaitUntil/StopNode" to="WaitUntil" method="OnStopCoroutines"]
+[connection signal="button_down" from="WaitWhile/Button" to="WaitWhile" method="OnButtonPressed"]
+[connection signal="pressed" from="WaitWhile/StopNode" to="WaitWhile" method="OnStopCoroutines"]
+[connection signal="pressed" from="StopAllCoroutines" to="Wait Little" method="OnStopCoroutines"]
+[connection signal="pressed" from="StopAllCoroutines" to="Wait Big" method="OnStopCoroutines"]
+[connection signal="pressed" from="StopAllCoroutines" to="RealWait Little" method="OnStopCoroutines"]
+[connection signal="pressed" from="StopAllCoroutines" to="RealWait Big" method="OnStopCoroutines"]
+[connection signal="pressed" from="StopAllCoroutines" to="WaitWhile" method="OnStopCoroutines"]
