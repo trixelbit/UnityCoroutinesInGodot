@@ -22,13 +22,17 @@ public class CoroutineTestNode : Spatial
         WaitUntil, 
         WaitWhile
     }
-    
 
+
+    private Coroutine _coroutine;
+    
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
         Translation = new Vector3(-10, Translation.y, 0);
-        CoroutineRunner.Run(this, MoveUpdate());
+            
+        _coroutine = CoroutineRunner.Run(this, MoveUpdate());
+        CoroutineRunner.Run(this, DelayedStop());
     }
 
     public void OnStopCoroutines()
@@ -42,7 +46,11 @@ public class CoroutineTestNode : Spatial
         _condition = true;
     }
 
-    
+    private IEnumerator DelayedStop()
+    {
+        yield return new WaitForSecondsRealtime(10);
+        CoroutineRunner.Stop(this, MoveUpdate());    
+    }
     public IEnumerator MoveUpdate()
     {
         for (int i = 0; i < 1000; i++)
