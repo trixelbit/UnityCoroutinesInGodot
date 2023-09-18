@@ -8,16 +8,26 @@ namespace U2GCoroutines
     /// <summary>
     /// Responsible for running of coroutines.
     /// </summary>
+    /// <remarks>
+    /// Some additional behavior to be aware of.
+    /// If coroutine is started by a node, and that node is deleted,
+    /// the coroutine it started will also be deleted alongside it.</remarks>
     public class CoroutineRunner : Node
     {
         private static CoroutineRunner s_instance;
         
         private static readonly List<Node> s_owner = new List<Node>();
         
-        private static readonly List<IEnumerator> s_originalEnumerator = new List<IEnumerator>();
+        private static readonly List<string> s_originalEnumerator = new List<string>();
         
         private static readonly List<Stack<IEnumerator>> s_enumeratorsStacks = new List<Stack<IEnumerator>>();
         
+        public enum ERunnerTick
+        {
+            Process, 
+            Physics
+        }
+       
         
         public CoroutineRunner()
         {
@@ -28,12 +38,6 @@ namespace U2GCoroutines
 
             s_instance = this;
         }
-
-        public enum ERunnerTick
-        {
-            Process, 
-            Physics
-        }
         
         /// <summary>
         /// Runs the provided coroutine.
@@ -43,7 +47,7 @@ namespace U2GCoroutines
         public static void Run(Node owningNode, IEnumerator coroutine)
         {
             s_owner.Add(owningNode);
-            s_originalEnumerator.Add(coroutine);
+            s_originalEnumerator.Add(coroutine.GetType().AssemblyQualifiedName);
             s_enumeratorsStacks.Add(new Stack<IEnumerator>(new[] { coroutine }));
         }
 
@@ -52,7 +56,7 @@ namespace U2GCoroutines
         /// Stops all coroutines started by the owning node.
         /// </summary>
         /// <param name="owningNode">The owning that started the coroutines (if any)</param>
-        public static void StopAllCoroutinesForNode(Node owningNode)
+        public static void StopAllForNode(Node owningNode)
         {
             for (int i = s_owner.Count - 1; i >= 0; i--)
             {
@@ -68,14 +72,21 @@ namespace U2GCoroutines
         /// <summary>
         /// Stops a specific coroutine started by the owning node.
         /// </summary>
+        /// <remarks>
+        /// If you started multiple instances of the same coroutine, this will stop all of them.
+        /// A means of stopping a specific instance of a coroutine is not currently supported but under consideration.
+        /// </remarks>
         /// <param name="owningNode">The owning node that started the coroutine.</param>
         /// <param name="enumerator">The enumerator to stop.</param>
-        public static void StopCoroutine(Node owningNode,IEnumerator enumerator)
+        public static void Stop(Node owningNode, IEnumerator enumerator)
         {
+            
             for (int i = s_owner.Count - 1; i >= 0; i--)
             {
+                bool enumeratorIsSameType = s_originalEnumerator[i].Equals(enumerator.GetType().AssemblyQualifiedName);
+                
                 if (s_owner[i] == owningNode && 
-                    s_originalEnumerator[i] == enumerator)
+                    enumeratorIsSameType)
                 {
                     s_enumeratorsStacks.RemoveAt(i);
                     s_originalEnumerator.RemoveAt(i);
@@ -100,7 +111,10 @@ namespace U2GCoroutines
 
             for (var i = 0; i < s_enumeratorsStacks.Count; i++)
             {
-                if (s_enumeratorsStacks[i].Count == 0)
+                bool noMoreInstructions  = s_enumeratorsStacks[i].Count == 0;
+                bool parentIsDeleted = s_owner[i] == null;
+                
+                if (noMoreInstructions || parentIsDeleted)
                 {
                     indiciesToRemove.Add(i);
                     continue;
@@ -131,6 +145,5 @@ namespace U2GCoroutines
                 s_owner.RemoveAt(indiciesToRemove[i]);
             }
         }
-        
     }
 }

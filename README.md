@@ -29,12 +29,15 @@ WaitForFixedUpdate()
 
 Current Supported Methods
 ```cs
-CoroutineRunner.Run(Node owningNode, IEnumerator coroutine)
+void CoroutineRunner.Run(Node owningNode, IEnumerator coroutine);
 
-CoroutineRunner.StopAllCoroutinesForNode(Node owningNode)
+void CoroutineRunner.Stop(Node owningNode, IEnumerator coroutine);
+
+void CoroutineRunner.StopAllForNode(Node owningNode);
 ```
 
-StopCoroutine is next and Pause/Resume methods is currently under consideration.
+Pause/Resume methods is currently under consideration.
+
 
 
 ## Example Usage

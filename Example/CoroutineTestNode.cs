@@ -28,13 +28,12 @@ public class CoroutineTestNode : Spatial
     public override void _Ready()
     {
         Translation = new Vector3(-10, Translation.y, 0);
-        CoroutineRunner.Run(this,DelayedStop());
         CoroutineRunner.Run(this, MoveUpdate());
     }
 
     public void OnStopCoroutines()
     {
-        CoroutineRunner.StopAllCoroutinesForNode(this);
+        CoroutineRunner.StopAllForNode(this);
     } 
     
     
@@ -43,12 +42,6 @@ public class CoroutineTestNode : Spatial
         _condition = true;
     }
 
-    public IEnumerator DelayedStop()
-    {
-        yield return new WaitForSecondsRealtime(2);
-    
-        CoroutineRunner.StopCoroutine(this, MoveUpdate());
-    }
     
     public IEnumerator MoveUpdate()
     {
