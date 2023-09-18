@@ -68,8 +68,10 @@ Pause/Resume methods is currently under consideration.
 
 ## Example Usage
 
+Simple Usage:
 ```cs 
 using U2GCoroutines;
+
 
 public override void _Ready()
 {
@@ -82,6 +84,42 @@ private IEnumerator PrintAfter10Seconds()
     yield return new WaitForSecondsRealtime(10);
 
     GD.Print("10 Seconds have passed!");
+}
+
+```
+
+Cached coroutine example:
+```cs
+using U2GCoroutines;
+
+// Reference to a specific ran coroutine.
+private Coroutine _moveLoop;
+
+
+
+public override void _Ready()
+{
+    _moveLoop = CoroutineRunner.Run(this, MoveLoop());
+    CoroutineRunner.Run(this, DelayedStop());
+}
+
+// moves object to the right continuesly
+private IEnumerator MoveLoop()
+{
+    while(true)
+    {
+        yield return new WaitForFixedUpdate();
+
+        Translation += Vector3.Right; 
+    }
+}
+
+// will stop the move loop after 10 seconds.
+private IEnumerator DelayedStop()
+{
+    yield return new WaitForSecondsRealtime(10);
+
+    CoroutineRunner.Stop(_moveLoop);
 }
 ```
 
