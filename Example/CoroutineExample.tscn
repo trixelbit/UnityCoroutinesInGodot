@@ -1,8 +1,8 @@
 [gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://UnityCoroutinesInGodot/Example/CoroutineTestNode.cs" type="Script" id=1]
-[ext_resource path="res://TimeWarper.cs" type="Script" id=3]
-[ext_resource path="res://Application.cs" type="Script" id=4]
+[ext_resource path="res://Application.cs" type="Script" id=1]
+[ext_resource path="res://UnityCoroutinesInGodot/Example/CoroutineTestNode.cs" type="Script" id=2]
+[ext_resource path="res://UnityCoroutinesInGodot/Example/TimeWarper.cs" type="Script" id=3]
 
 [sub_resource type="Shader" id=1]
 code = "shader_type spatial;
@@ -42,11 +42,11 @@ margin_bottom = 149.0
 text = "TimeScale: 1"
 
 [node name="Node" type="Node" parent="."]
-script = ExtResource( 4 )
+script = ExtResource( 1 )
 
 [node name="Wait Little" type="CSGBox" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 17.583, 0 )
-script = ExtResource( 1 )
+script = ExtResource( 2 )
 IterationTimeWait = 0.1
 
 [node name="StopNode" type="Button" parent="Wait Little"]
@@ -57,7 +57,7 @@ margin_bottom = 215.0
 
 [node name="Wait Big" type="CSGBox" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10.1009, 0.709724 )
-script = ExtResource( 1 )
+script = ExtResource( 2 )
 IterationTimeWait = 1.0
 
 [node name="StopNode" type="Button" parent="Wait Big"]
@@ -68,7 +68,7 @@ margin_bottom = 291.0
 
 [node name="RealWait Little" type="CSGBox" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.51935, 1.41945 )
-script = ExtResource( 1 )
+script = ExtResource( 2 )
 IterationTimeWait = 0.1
 WaitType = 1
 
@@ -80,7 +80,7 @@ margin_bottom = 344.0
 
 [node name="RealWait Big" type="CSGBox" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.4469, 1.41945 )
-script = ExtResource( 1 )
+script = ExtResource( 2 )
 IterationTimeWait = 1.0
 WaitType = 1
 
@@ -92,7 +92,7 @@ margin_bottom = 403.0
 
 [node name="WaitUntil" type="CSGBox" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -8.22527, 1.41945 )
-script = ExtResource( 1 )
+script = ExtResource( 2 )
 IterationTimeWait = 1.0
 WaitType = 2
 
@@ -110,7 +110,7 @@ margin_bottom = 474.0
 
 [node name="WaitWhile" type="CSGBox" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -13.9452, 1.41945 )
-script = ExtResource( 1 )
+script = ExtResource( 2 )
 IterationTimeWait = 1.0
 WaitType = 3
 
