@@ -18,21 +18,20 @@ public class CoroutineTestNode : Spatial
     public enum EWaitType
     {
         Wait,
-        RealTimeWait, 
+        RealTimeWait,
+        WaitForFixedUpdate,
         WaitUntil, 
         WaitWhile
     }
 
-
     private Coroutine _coroutine;
+   
     
-    // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
         Translation = new Vector3(-10, Translation.y, 0);
             
         _coroutine = CoroutineRunner.Run(this, MoveUpdate());
-        CoroutineRunner.Run(this, DelayedStop());
     }
 
     public void OnStopCoroutines()
@@ -49,20 +48,22 @@ public class CoroutineTestNode : Spatial
     private IEnumerator DelayedStop()
     {
         yield return new WaitForSecondsRealtime(10);
-        CoroutineRunner.Stop(this, MoveUpdate());    
+        CoroutineRunner.Stop(_coroutine);    
     }
     public IEnumerator MoveUpdate()
     {
-        for (int i = 0; i < 1000; i++)
+        while (true)
         {
             switch (WaitType)
             {
                 case EWaitType.Wait:
-                yield return new WaitForSeconds(IterationTimeWait);
+                    yield return new WaitForSeconds(IterationTimeWait);
                     break;
-               
                 case EWaitType.RealTimeWait:
-                yield return new WaitForSecondsRealtime(IterationTimeWait);
+                    yield return new WaitForSecondsRealtime(IterationTimeWait);
+                    break;
+                case EWaitType.WaitForFixedUpdate: 
+                    yield return new WaitForFixedUpdate();
                     break;
                 case EWaitType.WaitUntil:
                     yield return new WaitUntil(() => _condition);
@@ -70,7 +71,7 @@ public class CoroutineTestNode : Spatial
                 case EWaitType.WaitWhile:
                     yield return new WaitWhile(() => _condition);
                     break;
-                    break;
+                
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -81,7 +82,6 @@ public class CoroutineTestNode : Spatial
             {
                 Translation = new Vector3(-10, Translation.y, 0);
             }
-            
         }
     }
 }
